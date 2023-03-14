@@ -16,7 +16,7 @@ import api.cep.service.ViaCepService;
 @Service
 public class ClienteServiceImpl implements ClienteService {
 
-    // Singleton: Injetar os componentes do Spring com @Autowired.
+
     @Autowired
     private ClienteRepository clienteRepository;
     @Autowired
@@ -46,7 +46,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public void atualizar(Long id, Cliente cliente) {
-        // Buscar Cliente por ID, caso exista:
+       
         Optional<Cliente> clienteBd = clienteRepository.findById(id);
         if (clienteBd.isPresent()) {
             salvarClienteComCep(cliente);
@@ -60,16 +60,16 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     private void salvarClienteComCep(Cliente cliente) {
-        // Verificar se o Endereco do Cliente já existe (pelo CEP).
+      
         String cep = cliente.getEndereco().getCep();
         Endereco endereco = enderecoRepository.findById(cep).orElseGet(() -> {
-            // Caso não exista, integrar com o ViaCEP e persistir o retorno.
+          
             Endereco novoEndereco = viaCepService.consultarCep(cep);
             enderecoRepository.save(novoEndereco);
             return novoEndereco;
         });
         cliente.setEndereco(endereco);
-        // Inserir Cliente, vinculando o Endereco (novo ou existente).
+       
         clienteRepository.save(cliente);
     }
 
